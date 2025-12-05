@@ -1,0 +1,38 @@
+def check_brackets(filename):
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        stack = []
+        brackets = {'(': ')', '[': ']', '{': '}'}
+        closing = {')': '(', ']': '[', '}': '{'}
+        errors = []
+        
+        for i, char in enumerate(content):
+            if char in brackets:
+                stack.append((char, i))
+            elif char in closing:
+                if not stack:
+                    errors.append(f"Лишняя закрывающая скобка '{char}' на позиции {i}")
+                elif stack[-1][0] != closing[char]:
+                    errors.append(f"Несоответствие: ожидалась '{brackets[stack[-1][0]]}', найдена '{char}' на позиции {i}")
+                    stack.pop()
+                else:
+                    stack.pop()
+        
+        if stack:
+            for bracket, pos in stack:
+                errors.append(f"Незакрытая скобка '{bracket}' на позиции {pos}")
+        
+        if errors:
+            print("Найдены ошибки:")
+            for error in errors:
+                print(error)
+        else:
+            print("Все скобки соответствуют правильно")
+            
+    except FileNotFoundError:
+        print(f"Файл {filename} не найден")
+
+if _name_ == "__main__":
+    check_brackets("program.c")
